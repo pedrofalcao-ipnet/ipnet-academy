@@ -8,6 +8,7 @@ import {
   Settings,
   Star,
 } from "lucide-react";
+import { useEffect, useState } from "react";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -31,7 +32,20 @@ export const Route = createFileRoute("/")({
   component: Index,
 });
 
-const cards = [
+// ---------------------------------------------------------------------------
+// Tipos locais
+// ---------------------------------------------------------------------------
+type CategoryCard = {
+  title: string;
+  description: string;
+  icon: React.ElementType;
+  to: string;
+};
+
+// ---------------------------------------------------------------------------
+// Dados iniciais (seed / fallback enquanto o Firestore não retorna)
+// ---------------------------------------------------------------------------
+const INITIAL_CATEGORIES: CategoryCard[] = [
   {
     title: "Internal Processes",
     description:
@@ -77,6 +91,24 @@ const cards = [
 ];
 
 function Index() {
+  const [categories, setCategories] =
+    useState<CategoryCard[]>(INITIAL_CATEGORIES);
+
+  useEffect(() => {
+    // TODO: Buscar categorias do Firestore
+    // Coleção sugerida: `home_categories`
+    // Exemplo:
+    // import { collection, getDocs } from "firebase/firestore";
+    // import { db } from "@/lib/firebase";
+    //
+    // const snap = await getDocs(collection(db, "home_categories"));
+    // const data = snap.docs.map((doc) => ({
+    //   id: doc.id,
+    //   ...doc.data(),
+    // })) as CategoryCard[];
+    // setCategories(data);
+  }, []);
+
   return (
     <div className="flex min-h-[calc(100vh-4rem)] flex-col bg-background">
       {/* Hero Section */}
@@ -104,7 +136,7 @@ function Index() {
       {/* Main Grid */}
       <main className="mx-auto w-full max-w-7xl flex-1 px-4 pb-20 sm:px-6 lg:px-8">
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {cards.map((card) => {
+          {categories.map((card) => {
             const Icon = card.icon;
             return (
               <a

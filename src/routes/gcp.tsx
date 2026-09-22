@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { ExternalLink } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export const Route = createFileRoute("/gcp")({
   head: () => ({
@@ -27,7 +27,16 @@ export const Route = createFileRoute("/gcp")({
   component: GcpPage,
 });
 
-const categories = [
+// ---------------------------------------------------------------------------
+// Tipos locais
+// ---------------------------------------------------------------------------
+type GcpCategory = { id: string; label: string };
+type GcpService = { title: string; docsUrl: string; initial: string };
+
+// ---------------------------------------------------------------------------
+// Dados iniciais (seed / fallback enquanto o Firestore não retorna)
+// ---------------------------------------------------------------------------
+const INITIAL_GCP_CATEGORIES: GcpCategory[] = [
   { id: "infra", label: "Infra & Networking" },
   { id: "data", label: "Data & Storage" },
   { id: "ai", label: "AI" },
@@ -35,10 +44,7 @@ const categories = [
   { id: "apis", label: "APIs" },
 ];
 
-const services: Record<
-  string,
-  { title: string; docsUrl: string; initial: string }[]
-> = {
+const INITIAL_GCP_SERVICES: Record<string, GcpService[]> = {
   infra: [
     { title: "Compute Engine", docsUrl: "#", initial: "CE" },
     { title: "Kubernetes Engine", docsUrl: "#", initial: "GKE" },
@@ -83,6 +89,36 @@ const services: Record<
 
 function GcpPage() {
   const [activeTab, setActiveTab] = useState("infra");
+  const [categories, setCategories] =
+    useState<GcpCategory[]>(INITIAL_GCP_CATEGORIES);
+  const [services, setServices] =
+    useState<Record<string, GcpService[]>>(INITIAL_GCP_SERVICES);
+
+  useEffect(() => {
+    // TODO: Buscar categorias GCP do Firestore
+    // Coleção sugerida: `gcp_categories` (ordenar por campo `order`)
+    // Exemplo:
+    // import { collection, getDocs, orderBy, query } from "firebase/firestore";
+    // import { db } from "@/lib/firebase";
+    //
+    // const snap = await getDocs(query(collection(db, "gcp_categories"), orderBy("order")));
+    // const data = snap.docs.map((doc) => ({ id: doc.id, ...doc.data() })) as GcpCategory[];
+    // setCategories(data);
+  }, []);
+
+  useEffect(() => {
+    // TODO: Buscar serviços GCP do Firestore para a aba ativa
+    // Coleção sugerida: `gcp_services` com campo `category` para filtrar
+    // Exemplo:
+    // import { collection, getDocs, query, where } from "firebase/firestore";
+    // import { db } from "@/lib/firebase";
+    //
+    // const snap = await getDocs(
+    //   query(collection(db, "gcp_services"), where("category", "==", activeTab))
+    // );
+    // const data = snap.docs.map((doc) => ({ title: doc.data().title, docsUrl: doc.data().docsUrl, initial: doc.data().initial }));
+    // setServices((prev) => ({ ...prev, [activeTab]: data }));
+  }, [activeTab]);
 
   return (
     <div className="flex min-h-[calc(100vh-4rem)] flex-col bg-background">

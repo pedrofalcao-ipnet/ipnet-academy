@@ -7,6 +7,7 @@ import {
   Globe,
   HardHat,
 } from "lucide-react";
+import { useEffect, useState } from "react";
 
 export const Route = createFileRoute("/services")({
   head: () => ({
@@ -33,7 +34,19 @@ export const Route = createFileRoute("/services")({
   component: ServicesPage,
 });
 
-const services = [
+// ---------------------------------------------------------------------------
+// Tipos locais
+// ---------------------------------------------------------------------------
+type ServiceCard = {
+  title: string;
+  sellingPoint: string;
+  icon: React.ElementType;
+};
+
+// ---------------------------------------------------------------------------
+// Dados iniciais (seed / fallback enquanto o Firestore não retorna)
+// ---------------------------------------------------------------------------
+const INITIAL_SERVICES: ServiceCard[] = [
   {
     title: "Products",
     sellingPoint: "Curated cloud solutions tailored to accelerate customer outcomes.",
@@ -67,6 +80,24 @@ const services = [
 ];
 
 function ServicesPage() {
+  const [services, setServices] = useState<ServiceCard[]>(INITIAL_SERVICES);
+
+  useEffect(() => {
+    // TODO: Buscar serviços exclusivos IPNET do Firestore
+    // Coleção sugerida: `ipnet_services` (ordenar por campo `order`)
+    // Exemplo:
+    // import { collection, getDocs, orderBy, query } from "firebase/firestore";
+    // import { db } from "@/lib/firebase";
+    //
+    // const snap = await getDocs(query(collection(db, "ipnet_services"), orderBy("order")));
+    // const data = snap.docs.map((doc) => ({
+    //   title: doc.data().title,
+    //   sellingPoint: doc.data().sellingPoint,
+    //   icon: ..., // mapear string de ícone para componente Lucide
+    // }));
+    // setServices(data);
+  }, []);
+
   return (
     <div className="flex min-h-[calc(100vh-4rem)] flex-col bg-background">
       {/* Hero */}

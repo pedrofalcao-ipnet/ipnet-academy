@@ -13,7 +13,7 @@ import {
   ShieldCheck,
   Users,
 } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export const Route = createFileRoute("/oci")({
   head: () => ({
@@ -40,17 +40,27 @@ export const Route = createFileRoute("/oci")({
   component: OciPage,
 });
 
-const categories = [
+// ---------------------------------------------------------------------------
+// Tipos locais
+// ---------------------------------------------------------------------------
+type OciCategory = { id: string; label: string };
+type OciService = {
+  title: string;
+  playbookUrl: string;
+  icon: typeof Server;
+};
+
+// ---------------------------------------------------------------------------
+// Dados iniciais (seed / fallback enquanto o Firestore não retorna)
+// ---------------------------------------------------------------------------
+const INITIAL_OCI_CATEGORIES: OciCategory[] = [
   { id: "core", label: "Core Infra" },
   { id: "database", label: "Database" },
   { id: "security", label: "Security & Management" },
   { id: "modernization", label: "Modernization" },
 ];
 
-const services: Record<
-  string,
-  { title: string; playbookUrl: string; icon: typeof Server }[]
-> = {
+const INITIAL_OCI_SERVICES: Record<string, OciService[]> = {
   core: [
     { title: "Compute", playbookUrl: "#", icon: Server },
     { title: "Object Storage", playbookUrl: "#", icon: FolderOpen },
@@ -81,6 +91,36 @@ const services: Record<
 
 function OciPage() {
   const [activeTab, setActiveTab] = useState("core");
+  const [categories, setCategories] =
+    useState<OciCategory[]>(INITIAL_OCI_CATEGORIES);
+  const [services, setServices] =
+    useState<Record<string, OciService[]>>(INITIAL_OCI_SERVICES);
+
+  useEffect(() => {
+    // TODO: Buscar categorias OCI do Firestore
+    // Coleção sugerida: `oci_categories` (ordenar por campo `order`)
+    // Exemplo:
+    // import { collection, getDocs, orderBy, query } from "firebase/firestore";
+    // import { db } from "@/lib/firebase";
+    //
+    // const snap = await getDocs(query(collection(db, "oci_categories"), orderBy("order")));
+    // const data = snap.docs.map((doc) => ({ id: doc.id, label: doc.data().label }));
+    // setCategories(data);
+  }, []);
+
+  useEffect(() => {
+    // TODO: Buscar serviços OCI do Firestore para a aba ativa
+    // Coleção sugerida: `oci_services` com campo `category` para filtrar
+    // Exemplo:
+    // import { collection, getDocs, query, where } from "firebase/firestore";
+    // import { db } from "@/lib/firebase";
+    //
+    // const snap = await getDocs(
+    //   query(collection(db, "oci_services"), where("category", "==", activeTab))
+    // );
+    // const data = snap.docs.map((doc) => ({ title: doc.data().title, playbookUrl: doc.data().playbookUrl, icon: ... }));
+    // setServices((prev) => ({ ...prev, [activeTab]: data }));
+  }, [activeTab]);
 
   return (
     <div className="flex min-h-[calc(100vh-4rem)] flex-col bg-background">

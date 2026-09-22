@@ -24,14 +24,23 @@ export const Route = createFileRoute("/processes")({
   component: ProcessesPage,
 });
 
-const sidebarLinks = [
+// ---------------------------------------------------------------------------
+// Tipos locais
+// ---------------------------------------------------------------------------
+type SidebarLink = { id: string; label: string };
+type ProcessSection = { id: string; title: string; description: string };
+
+// ---------------------------------------------------------------------------
+// Dados iniciais (seed / fallback enquanto o Firestore não retorna)
+// ---------------------------------------------------------------------------
+const INITIAL_SIDEBAR_LINKS: SidebarLink[] = [
   { id: "service-teams", label: "Times de Serviço" },
   { id: "renew-salesops", label: "Renew vs SalesOps" },
   { id: "financeiro", label: "Financeiro" },
   { id: "administrative", label: "Administrative" },
 ];
 
-const sections = [
+const INITIAL_SECTIONS: ProcessSection[] = [
   {
     id: "service-teams",
     title: "When to engage service teams?",
@@ -59,6 +68,7 @@ const sections = [
 ];
 
 function ProcessesPage() {
+  // Controle de hash ativo para highlight no sidebar (lógica original preservada)
   const [activeHash, setActiveHash] = useState("");
 
   useEffect(() => {
@@ -66,6 +76,27 @@ function ProcessesPage() {
     const onHashChange = () => setActiveHash(window.location.hash);
     window.addEventListener("hashchange", onHashChange);
     return () => window.removeEventListener("hashchange", onHashChange);
+  }, []);
+
+  // Dados dinâmicos — serão populados pelo Firestore
+  const [sidebarLinks, setSidebarLinks] =
+    useState<SidebarLink[]>(INITIAL_SIDEBAR_LINKS);
+  const [sections, setSections] =
+    useState<ProcessSection[]>(INITIAL_SECTIONS);
+
+  useEffect(() => {
+    // TODO: Buscar processos internos do Firestore
+    // Coleção sugerida: `internal_processes` (ordenar por campo `order`)
+    // Cada documento deve ter: id, title, description, sidebarLabel
+    // Exemplo:
+    // import { collection, getDocs, orderBy, query } from "firebase/firestore";
+    // import { db } from "@/lib/firebase";
+    //
+    // const snap = await getDocs(query(collection(db, "internal_processes"), orderBy("order")));
+    // const docs = snap.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+    //
+    // setSidebarLinks(docs.map((d) => ({ id: d.id, label: d.sidebarLabel })));
+    // setSections(docs.map((d) => ({ id: d.id, title: d.title, description: d.description })));
   }, []);
 
   return (

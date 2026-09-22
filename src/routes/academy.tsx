@@ -6,6 +6,7 @@ import {
   Sparkles,
   Trophy,
 } from "lucide-react";
+import { useEffect, useState } from "react";
 
 export const Route = createFileRoute("/academy")({
   head: () => ({
@@ -29,7 +30,10 @@ export const Route = createFileRoute("/academy")({
   component: AcademyPage,
 });
 
-const gwsAgenda = [
+// ---------------------------------------------------------------------------
+// Dados iniciais (seed / fallback enquanto o Firestore não retorna)
+// ---------------------------------------------------------------------------
+const INITIAL_GWS_AGENDA: string[] = [
   "Workspace Admin Fundamentals",
   "User & License Management",
   "Security & Data Protection",
@@ -37,6 +41,20 @@ const gwsAgenda = [
 ];
 
 function AcademyPage() {
+  const [gwsAgenda, setGwsAgenda] = useState<string[]>(INITIAL_GWS_AGENDA);
+
+  useEffect(() => {
+    // TODO: Buscar itens da agenda GWS do Firestore
+    // Coleção sugerida: `academy_gws_agenda` (ordenar por campo `order`)
+    // Exemplo:
+    // import { collection, getDocs, orderBy, query } from "firebase/firestore";
+    // import { db } from "@/lib/firebase";
+    //
+    // const snap = await getDocs(query(collection(db, "academy_gws_agenda"), orderBy("order")));
+    // const data = snap.docs.map((doc) => doc.data().title as string);
+    // setGwsAgenda(data);
+  }, []);
+
   return (
     <div className="min-h-[calc(100vh-4rem)] bg-background">
       <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8 lg:py-16">

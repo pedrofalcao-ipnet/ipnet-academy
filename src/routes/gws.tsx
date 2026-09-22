@@ -8,6 +8,7 @@ import {
   Users,
   Video,
 } from "lucide-react";
+import { useEffect, useState } from "react";
 
 export const Route = createFileRoute("/gws")({
   head: () => ({
@@ -34,7 +35,25 @@ export const Route = createFileRoute("/gws")({
   component: GwsPage,
 });
 
-const tools = [
+// ---------------------------------------------------------------------------
+// Tipos locais
+// ---------------------------------------------------------------------------
+type GwsTool = {
+  name: string;
+  description: string;
+  icon: React.ElementType;
+};
+
+type GwsTraining = {
+  title: string;
+  audience: string;
+  duration: string;
+};
+
+// ---------------------------------------------------------------------------
+// Dados iniciais (seed / fallback enquanto o Firestore não retorna)
+// ---------------------------------------------------------------------------
+const INITIAL_GWS_TOOLS: GwsTool[] = [
   {
     name: "Gmail",
     description: "Email management, security settings, and user guides.",
@@ -62,7 +81,7 @@ const tools = [
   },
 ];
 
-const trainings = [
+const INITIAL_GWS_TRAININGS: GwsTraining[] = [
   {
     title: "GWS Fundamentals",
     audience: "New hires & CXM team",
@@ -86,6 +105,29 @@ const trainings = [
 ];
 
 function GwsPage() {
+  const [tools, setTools] = useState<GwsTool[]>(INITIAL_GWS_TOOLS);
+  const [trainings, setTrainings] =
+    useState<GwsTraining[]>(INITIAL_GWS_TRAININGS);
+
+  useEffect(() => {
+    // TODO: Buscar ferramentas GWS do Firestore
+    // Coleção sugerida: `gws_tools` (ordenar por campo `order`)
+    // Exemplo:
+    // import { collection, getDocs, orderBy, query } from "firebase/firestore";
+    // import { db } from "@/lib/firebase";
+    //
+    // const snap = await getDocs(query(collection(db, "gws_tools"), orderBy("order")));
+    // const data = snap.docs.map((doc) => ({ name: doc.data().name, description: doc.data().description, icon: ... }));
+    // setTools(data);
+
+    // TODO: Buscar currículos de treinamento GWS do Firestore
+    // Coleção sugerida: `gws_trainings` (ordenar por campo `order`)
+    // Exemplo:
+    // const snapT = await getDocs(query(collection(db, "gws_trainings"), orderBy("order")));
+    // const dataT = snapT.docs.map((doc) => ({ title: doc.data().title, audience: doc.data().audience, duration: doc.data().duration }));
+    // setTrainings(dataT);
+  }, []);
+
   return (
     <div className="min-h-[calc(100vh-4rem)] bg-background">
       <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8 lg:py-16">
